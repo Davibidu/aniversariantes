@@ -95,7 +95,7 @@
     <div class="divider"></div>
 
     <div class="action-btns">
-      <button class="btn-pdf" onclick="mostrarPDF()">📄 Exportar PDF</button>
+      <button class="btn-pdf" onclick="mostrarPDF()">🖨️ Imprimir lista</button>
       <button class="btn-backup" onclick="document.getElementById('file-input').click()">📂 Importar lista</button>
       <input id="file-input" type="file" accept="*/*" style="display:none" onchange="carregarBackup(event)" />
     </div>
@@ -142,7 +142,7 @@
     <button class="pdf-back" onclick="fecharPDF()">← Voltar</button>
   </div>
   <p class="pdf-sub">Igreja na Casa</p>
-  <h1 style="text-align:center;font-weight:normal;margin-bottom:20px;">🎂 Aniversários por Mês</h1>
+  <h1 id="pdf-titulo" style="text-align:center;font-weight:normal;margin-bottom:20px;"></h1>
   <div id="pdf-conteudo"></div>
   <p class="footer" id="pdf-footer"></p>
 </div>
@@ -410,33 +410,61 @@ function exportarBackup() {
 }
 
 function mostrarPDF() {
-  const porMes = Array.from({ length: 12 }, (_, i) => ({
-    mes: MESES[i],
-    num: i + 1,
-    pessoas: lista.filter(p => getMes(p.data) === i + 1)
-      .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0))
-  }));
-  const semData = lista.filter(p => !getMes(p.data));
+  let conteudoHTML = "";
+  let titulo = "";
 
-  const todosMeses = [...porMes];
-  if (semData.length > 0) todosMeses.push({ mes: "Sem data", pessoas: semData, semData: true });
+  if (abaAtual === "lista") {
+    // EXPORTAR LISTA COMPLETA
+    titulo = "🎂 Lista de Aniversários";
+    conteudoHTML = `
+      <table class="pdf-table" style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:#f5ede4;">
+            <th style="padding:7px 8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">#</th>
+            <th style="padding:7px 8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Nome</th>
+            <th style="padding:7px 8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${lista.map((p, i) => `
+            <tr>
+              <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#b89a80;width:24px;">${i+1}</td>
+              <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;">${p.nome}</td>
+              <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#7a5c3a;width:55px;">${p.data || "—"}</td>
+            </tr>`).join("")}
+        </tbody>
+      </table>`;
+  } else {
+    // EXPORTAR POR MÊS
+    titulo = "🎂 Aniversários por Mês";
+    const porMes = Array.from({ length: 12 }, (_, i) => ({
+      mes: MESES[i],
+      pessoas: lista.filter(p => getMes(p.data) === i + 1)
+        .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0))
+    }));
+    const semData = lista.filter(p => !getMes(p.data));
+    const todosMeses = [...porMes];
+    if (semData.length > 0) todosMeses.push({ mes: "Sem data", pessoas: semData });
 
-  const celulas = todosMeses.map(m => `
-    <div class="pdf-mes">
-      <div class="pdf-mes-titulo">${m.mes}</div>
-      ${m.pessoas.length === 0
-        ? `<div class="pdf-vazio">—</div>`
-        : `<table class="pdf-table">${m.pessoas.map((p, i) => `
-          <tr>
-            <td class="pdf-num">${i+1}</td>
-            <td>${p.nome}</td>
-            <td class="pdf-data">${p.data || "—"}</td>
-          </tr>`).join("")}
-        </table>`
-      }
-    </div>`).join("");
+    const celulas = todosMeses.map(m => `
+      <div class="pdf-mes">
+        <div class="pdf-mes-titulo">${m.mes}</div>
+        ${m.pessoas.length === 0
+          ? `<div class="pdf-vazio">—</div>`
+          : `<table class="pdf-table">${m.pessoas.map((p, i) => `
+            <tr>
+              <td class="pdf-num">${i+1}</td>
+              <td>${p.nome}</td>
+              <td class="pdf-data">${p.data || "—"}</td>
+            </tr>`).join("")}
+          </table>`
+        }
+      </div>`).join("");
+    conteudoHTML = `<div class="pdf-grid">${celulas}</div>`;
+  }
 
-  document.getElementById("pdf-conteudo").innerHTML = `<div class="pdf-grid">${celulas}</div>`;
+  document.getElementById("pdf-titulo").textContent = titulo;
+  document.getElementById("pdf-conteudo").innerHTML = conteudoHTML;
   document.getElementById("pdf-footer").textContent = `${lista.length} pessoas na lista`;
   document.getElementById("main-view").style.display = "none";
   document.getElementById("pdf-view").style.display = "block";
