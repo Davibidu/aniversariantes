@@ -410,6 +410,15 @@ function exportarBackup() {
 }
 
 function mostrarPDF() {
+  // Baixa o backup txt automaticamente junto com a impressão
+  const txt = JSON.stringify(lista, null, 2);
+  const blob = new Blob([txt], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "aniversarios_backup.txt";
+  a.click();
+  URL.revokeObjectURL(url);
   let conteudoHTML = "";
   let titulo = "";
 
