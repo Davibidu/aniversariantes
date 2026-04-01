@@ -246,7 +246,7 @@ function makeItemHTML(item, idx, edId, edCampo) {
     : `<span class="item-nome" onclick="iniciarEdit(${item.id},'nome')">${item.nome}</span>`;
 
   const dataHTML = (edId === item.id && edCampo === "data")
-    ? `<input class="edit edit-data" id="edit-input" value="${item.data}" placeholder="dd/mm" onblur="salvarEdit(${item.id},'data',this.value)" onkeydown="if(event.key==='Enter')this.blur()" />`
+    ? `<input class="edit edit-data" id="edit-input" value="${item.data}" placeholder="dd/mm" inputmode="numeric" pattern="[0-9]*" onblur="salvarEdit(${item.id},'data',this.value)" onkeydown="if(event.key==='Enter')this.blur()" oninput="formatarData(this)" />`
     : `<span class="item-data ${item.data ? '' : 'vazio'}" onclick="iniciarEdit(${item.id},'data')">${item.data || "—"}</span>`;
 
   return `
@@ -363,13 +363,24 @@ function confirmarColar() {
   }
 }
 
+function formatarData(input) {
+  let v = input.value.replace(/\D/g, ""); // só números
+  if (v.length > 4) v = v.slice(0, 4);
+  if (v.length >= 3) {
+    v = v.slice(0, 2) + "/" + v.slice(2);
+  }
+  input.value = v;
+}
+
 function carregarBackup(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (evt) => {
     try {
-      lista = JSON.parse(evt.target.result);
+      // Remove BOM e espaços extras que o iPhone às vezes adiciona
+      const texto = evt.target.result.replace(/^\uFEFF/, "").trim();
+      lista = JSON.parse(texto);
       salvarLocal();
       if (abaAtual === "lista") renderLista("");
       else renderMeses();
