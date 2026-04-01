@@ -59,17 +59,18 @@
     #toast { display: none; position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #3a2e26; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.2); white-space: nowrap; }
 
     /* Tela PDF */
-    #pdf-view { display: none; background: #fff; min-height: 100vh; padding: 28px; }
-    #pdf-view h1 { font-size: 22px; margin-bottom: 4px; }
-    .pdf-sub { text-align: center; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a; margin-bottom: 20px; }
-    .pdf-mes { margin-bottom: 14px; }
-    .pdf-mes-titulo { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #a0856a; border-bottom: 1px solid #f0e8e0; padding-bottom: 3px; margin-bottom: 5px; display: flex; justify-content: space-between; }
-    .pdf-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .pdf-table td { padding: 4px 8px; border-bottom: 1px solid #f5f0eb; }
-    .pdf-num { color: #b89a80; width: 24px; }
-    .pdf-data { color: #7a5c3a; width: 55px; }
-    .pdf-vazio { color: #ccc; font-style: italic; font-size: 12px; padding: 4px 0; }
-    .pdf-actions { display: flex; gap: 10px; margin-bottom: 24px; }
+    #pdf-view { display: none; background: #fff; min-height: 100vh; padding: 20px 24px; }
+    #pdf-view h1 { font-size: 20px; margin-bottom: 4px; }
+    .pdf-sub { text-align: center; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a; margin-bottom: 16px; }
+    .pdf-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #bbb; border-left: 1px solid #bbb; }
+    .pdf-mes { border-right: 1px solid #bbb; border-bottom: 1px solid #bbb; padding: 8px; break-inside: avoid; }
+    .pdf-mes-titulo { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #3a2e26; border-bottom: 1px solid #bbb; padding-bottom: 4px; margin-bottom: 5px; }
+    .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .pdf-table td { padding: 2px 3px; }
+    .pdf-num { color: #b89a80; width: 16px; }
+    .pdf-data { color: #7a5c3a; width: 36px; text-align: right; }
+    .pdf-vazio { color: #ccc; font-style: italic; font-size: 10px; padding: 2px 0; }
+    .pdf-actions { display: flex; gap: 10px; margin-bottom: 20px; }
     .pdf-actions button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     .pdf-print { background: #c49a6c; color: #fff; }
     .pdf-back { background: #e8ddd4; color: #3a2e26; }
@@ -78,7 +79,7 @@
       .pdf-actions { display: none !important; }
       body { padding: 0; background: #fff; }
       #main-view { display: none !important; }
-      #pdf-view { display: block !important; padding: 20px; }
+      #pdf-view { display: block !important; padding: 12px; }
     }
   </style>
 </head>
@@ -326,28 +327,31 @@ function carregarBackup(e) {
 function mostrarPDF() {
   const porMes = Array.from({ length: 12 }, (_, i) => ({
     mes: MESES[i],
+    num: i + 1,
     pessoas: lista.filter(p => getMes(p.data) === i + 1)
       .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0))
   }));
   const semData = lista.filter(p => !getMes(p.data));
 
-  let html = porMes.map(m => `
+  const todosMeses = [...porMes];
+  if (semData.length > 0) todosMeses.push({ mes: "Sem data", pessoas: semData, semData: true });
+
+  const celulas = todosMeses.map(m => `
     <div class="pdf-mes">
-      <div class="pdf-mes-titulo"><span>${m.mes}</span><span>${m.pessoas.length} pessoa${m.pessoas.length !== 1 ? "s" : ""}</span></div>
+      <div class="pdf-mes-titulo">${m.mes}</div>
       ${m.pessoas.length === 0
-        ? `<div class="pdf-vazio">Nenhum aniversariante</div>`
-        : `<table class="pdf-table">${m.pessoas.map((p, i) => `<tr><td class="pdf-num">${i+1}</td><td>${p.nome}</td><td class="pdf-data">${p.data}</td></tr>`).join("")}</table>`
+        ? `<div class="pdf-vazio">—</div>`
+        : `<table class="pdf-table">${m.pessoas.map((p, i) => `
+          <tr>
+            <td class="pdf-num">${i+1}</td>
+            <td>${p.nome}</td>
+            <td class="pdf-data">${p.data || "—"}</td>
+          </tr>`).join("")}
+        </table>`
       }
     </div>`).join("");
 
-  if (semData.length > 0) {
-    html += `<div class="pdf-mes">
-      <div class="pdf-mes-titulo" style="color:#c4a0a0"><span>Sem data</span><span>${semData.length}</span></div>
-      <table class="pdf-table">${semData.map((p, i) => `<tr><td class="pdf-num">${i+1}</td><td>${p.nome}</td><td class="pdf-data">—</td></tr>`).join("")}</table>
-    </div>`;
-  }
-
-  document.getElementById("pdf-conteudo").innerHTML = html;
+  document.getElementById("pdf-conteudo").innerHTML = `<div class="pdf-grid">${celulas}</div>`;
   document.getElementById("pdf-footer").textContent = `${lista.length} pessoas na lista`;
   document.getElementById("main-view").style.display = "none";
   document.getElementById("pdf-view").style.display = "block";
