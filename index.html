@@ -96,9 +96,7 @@
 
     <div class="action-btns">
       <button class="btn-pdf" onclick="mostrarPDF()">📄 Exportar PDF</button>
-      <button class="btn-backup" onclick="exportarBackup()">💾 Salvar backup</button>
       <button class="btn-backup" onclick="document.getElementById('file-input').click()">📂 Importar lista</button>
-      <button class="btn-backup" onclick="abrirColar()" style="background:#9a7eae;">📋 Colar lista</button>
       <input id="file-input" type="file" accept="*/*" style="display:none" onchange="carregarBackup(event)" />
     </div>
     <div id="save-indicator" style="text-align:center;font-size:11px;color:#b8a090;margin-bottom:10px;"></div>
@@ -364,6 +362,8 @@ function confirmarColar() {
     showToast("❌ Conteúdo inválido. Verifique o backup.");
   }
 }
+
+function carregarBackup(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -374,10 +374,16 @@ function confirmarColar() {
       if (abaAtual === "lista") renderLista("");
       else renderMeses();
       showToast("✅ Lista importada!");
-    } catch { showToast("❌ Arquivo inválido."); }
+    } catch {
+      showToast("❌ Arquivo inválido.");
+    }
+    e.target.value = "";
   };
-  reader.readAsText(file);
-  e.target.value = "";
+  reader.onerror = () => {
+    showToast("❌ Erro ao ler o arquivo.");
+    e.target.value = "";
+  };
+  reader.readAsText(file, "UTF-8");
 }
 
 function exportarBackup() {
