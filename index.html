@@ -1,499 +1,1051 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Aniversários - Igreja na Casa</title>
-  <meta name="theme-color" content="#c49a6c" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Aniversários" />
-  <link rel="manifest" href="manifest.json" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f0eb; color: #3a2e26; min-height: 100vh; padding: 24px 14px 40px; }
-    h1 { font-size: 26px; font-weight: normal; text-align: center; }
-    .sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #a0856a; text-align: center; margin-bottom: 6px; }
-    .divider { width: 40px; height: 2px; background: #c49a6c; margin: 10px auto 20px; border-radius: 2px; }
-    .wrap { max-width: 540px; margin: 0 auto; }
+ <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Aniversários - Igreja na Casa</title>
+    <meta name="theme-color" content="#c49a6c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Aniversários" />
+    <link rel="manifest" href="manifest.json" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f0eb; color:
+  #3a2e26; min-height: 100vh; padding: 24px 14px 40px; }
+      h1 { font-size: 26px; font-weight: normal; text-align: center; }
+      .sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #a0856a; text-align: center;
+  margin-bottom: 6px; }
+      .divider { width: 40px; height: 2px; background: #c49a6c; margin: 10px auto 20px; border-radius: 2px; }
+      .wrap { max-width: 540px; margin: 0 auto; }
 
-    /* Botões de ação */
-    .action-btns { display: flex; gap: 8px; margin-bottom: 14px; }
-    .action-btns button { flex: 1; padding: 10px 6px; border: none; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; cursor: pointer; color: #fff; }
-    .btn-pdf { background: #c49a6c; }
-    .btn-backup { background: #7a8eae; }
+      /* Botões de ação */
+      .action-btns { display: flex; gap: 8px; margin-bottom: 14px; }
+      .action-btns button { flex: 1; padding: 10px 6px; border: none; border-radius: 8px; font-family: -apple-system,
+  BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; cursor: pointer; color: #fff; }
+      .btn-pdf { background: #c49a6c; }
+      .btn-backup { background: #7a8eae; }
 
-    /* Abas */
-    .tabs { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid #e8ddd4; margin-bottom: 14px; }
-    .tab { flex: 1; padding: 10px; border: none; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; background: #fffdf9; color: #a0856a; transition: background 0.2s; }
-    .tab.active { background: #c49a6c; color: #fff; }
+      /* Abas */
+      .tabs { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid #e8ddd4; margin-bottom: 14px; }
+      .tab { flex: 1; padding: 10px; border: none; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont,
+  'Segoe UI', sans-serif; font-size: 13px; background: #fffdf9; color: #a0856a; transition: background 0.2s; }
+      .tab.active { background: #c49a6c; color: #fff; }
 
-    /* Busca */
-    .search { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #ddd0c4; background: #fffdf9; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #3a2e26; margin-bottom: 12px; outline: none; }
+      /* Busca */
+      .search { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #ddd0c4; background: #fffdf9;
+  font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #3a2e26;
+  margin-bottom: 12px; outline: none; }
 
-    /* Itens */
-    .list { display: flex; flex-direction: column; gap: 5px; }
-    .item { display: flex; align-items: center; background: #fffdf9; border: 1px solid #e8ddd4; border-radius: 10px; padding: 9px 12px; gap: 8px; }
-    .item-num { font-size: 11px; color: #b89a80; min-width: 18px; text-align: right; }
-    .item-nome { flex: 1; font-size: 15px; color: #3a2e26; cursor: pointer; padding: 2px 0; }
-    .item-data { width: 55px; font-size: 14px; color: #7a5c3a; cursor: pointer; text-align: center; padding: 2px 0; }
-    .item-data.vazio { color: #ccc; font-style: italic; }
-    .item-del { background: none; border: none; cursor: pointer; color: #d4a0a0; font-size: 15px; padding: 2px 4px; line-height: 1; font-family: inherit; }
-    input.edit { border: none; border-bottom: 1.5px solid #c49a6c; background: transparent; outline: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #3a2e26; padding: 2px 0; }
-    input.edit-nome { flex: 1; font-size: 15px; }
-    input.edit-data { width: 55px; font-size: 14px; color: #7a5c3a; text-align: center; }
+      /* Itens */
+      .list { display: flex; flex-direction: column; gap: 5px; }
+      .item { display: flex; align-items: center; background: #fffdf9; border: 1px solid #e8ddd4; border-radius: 10px;
+  padding: 9px 12px; gap: 8px; }
+      .item-num { font-size: 11px; color: #b89a80; min-width: 18px; text-align: right; }
+      .item-nome { flex: 1; font-size: 15px; color: #3a2e26; cursor: pointer; padding: 2px 0; }
+      .item-data { width: 55px; font-size: 14px; color: #7a5c3a; cursor: pointer; text-align: center; padding: 2px 0; }
+      .item-data.vazio { color: #ccc; font-style: italic; }
+      .item-del { background: none; border: none; cursor: pointer; color: #d4a0a0; font-size: 15px; padding: 2px 4px;
+  line-height: 1; font-family: inherit; }
+      input.edit { border: none; border-bottom: 1.5px solid #c49a6c; background: transparent; outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #3a2e26; padding: 2px 0; }
+      input.edit-nome { flex: 1; font-size: 15px; }
+      input.edit-data { width: 55px; font-size: 14px; color: #7a5c3a; text-align: center; }
 
-    /* Adicionar */
-    .add-btn { width: 100%; margin-top: 12px; padding: 11px; background: none; border: 1.5px dashed #c49a6c; border-radius: 10px; color: #c49a6c; font-size: 14px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+      /* Adicionar */
+      .add-btn { width: 100%; margin-top: 12px; padding: 11px; background: none; border: 1.5px dashed #c49a6c;
+  border-radius: 10px; color: #c49a6c; font-size: 14px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont,
+   'Segoe UI', sans-serif; }
 
-    /* Por mês */
-    .mes-block { margin-bottom: 16px; }
-    .mes-titulo { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a; border-bottom: 1px solid #e8ddd4; padding-bottom: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-    .mes-count { font-size: 10px; color: #c4b0a0; }
-    .mes-vazio { font-size: 13px; color: #ccc; font-style: italic; padding: 6px 4px; }
+      /* Por mês */
+      .mes-block { margin-bottom: 16px; }
+      .mes-titulo { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a; border-bottom: 1px
+  solid #e8ddd4; padding-bottom: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items:
+  center; }
+      .mes-count { font-size: 10px; color: #c4b0a0; }
+      .mes-vazio { font-size: 13px; color: #ccc; font-style: italic; padding: 6px 4px; }
 
-    /* Rodapé */
-    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #b8a090; }
+      /* Rodapé */
+      .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #b8a090; }
 
-    /* Toast */
-    #toast { display: none; position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #3a2e26; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.2); white-space: nowrap; }
+      /* Toast */
+      #toast { display: none; position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #3a2e26;
+  color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 999; box-shadow: 0 4px 12px
+  rgba(0,0,0,0.2); white-space: nowrap; }
 
-    /* Tela PDF */
-    #pdf-view { display: none; background: #fff; min-height: 100vh; padding: 20px 24px; }
-    #pdf-view h1 { font-size: 20px; margin-bottom: 4px; }
-    .pdf-sub { text-align: center; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a; margin-bottom: 16px; }
-    .pdf-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #bbb; border-left: 1px solid #bbb; }
-    .pdf-mes { border-right: 1px solid #bbb; border-bottom: 1px solid #bbb; padding: 8px; break-inside: avoid; }
-    .pdf-mes-titulo { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #3a2e26; border-bottom: 1px solid #bbb; padding-bottom: 4px; margin-bottom: 5px; }
-    .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    .pdf-table td { padding: 2px 3px; }
-    .pdf-num { color: #b89a80; width: 16px; }
-    .pdf-data { color: #7a5c3a; width: 36px; text-align: right; }
-    .pdf-vazio { color: #ccc; font-style: italic; font-size: 10px; padding: 2px 0; }
-    .pdf-actions { display: flex; gap: 10px; margin-bottom: 20px; }
-    .pdf-actions button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-    .pdf-print { background: #c49a6c; color: #fff; }
-    .pdf-back { background: #e8ddd4; color: #3a2e26; }
+      /* Tela PDF */
+      #pdf-view { display: none; background: #fff; min-height: 100vh; padding: 20px 24px; }
+      #pdf-view h1 { font-size: 20px; margin-bottom: 4px; }
+      .pdf-sub { text-align: center; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a;
+  margin-bottom: 16px; }
+      .pdf-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #bbb; border-left: 1px
+  solid #bbb; }
+      .pdf-mes { border-right: 1px solid #bbb; border-bottom: 1px solid #bbb; padding: 8px; break-inside: avoid; }
+      .pdf-mes-titulo { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #3a2e26; border-bottom:
+  1px solid #bbb; padding-bottom: 4px; margin-bottom: 5px; }
+      .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+      .pdf-table td { padding: 2px 3px; }
+      .pdf-num { color: #b89a80; width: 16px; }
+      .pdf-data { color: #7a5c3a; width: 36px; text-align: right; }
+      .pdf-vazio { color: #ccc; font-style: italic; font-size: 10px; padding: 2px 0; }
+      .pdf-actions { display: flex; gap: 10px; margin-bottom: 20px; }
+      .pdf-actions button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+      .pdf-print { background: #c49a6c; color: #fff; }
+      .pdf-back { background: #e8ddd4; color: #3a2e26; }
 
-    @media print {
-      .pdf-actions { display: none !important; }
-      body { padding: 0; background: #fff; }
-      #main-view { display: none !important; }
-      #pdf-view { display: block !important; padding: 12px; }
-    }
-  </style>
-</head>
-<body>
-
-<div id="toast"></div>
-
-<!-- TELA PRINCIPAL -->
-<div id="main-view">
-  <div class="wrap">
-    <div class="sub">Igreja na Casa</div>
-    <h1>🎂 Aniversários</h1>
-    <div class="divider"></div>
-
-    <div class="action-btns">
-      <button class="btn-pdf" onclick="mostrarPDF()">🖨️ Imprimir lista</button>
-      <button class="btn-backup" onclick="document.getElementById('file-input').click()">📂 Importar lista</button>
-      <input id="file-input" type="file" accept="*/*" style="display:none" onchange="carregarBackup(event)" />
-    </div>
-    <div id="save-indicator" style="text-align:center;font-size:11px;color:#b8a090;margin-bottom:10px;"></div>
-
-    <div class="tabs">
-      <button class="tab active" id="tab-lista" onclick="setAba('lista')">📋 Lista completa</button>
-      <button class="tab" id="tab-meses" onclick="setAba('meses')">📅 Por mês</button>
-    </div>
-
-    <!-- Lista completa -->
-    <div id="view-lista">
-      <input class="search" type="text" placeholder="Buscar nome..." oninput="renderLista(this.value)" />
-      <div class="list" id="lista-container"></div>
-      <button class="add-btn" onclick="adicionarPessoa()">+ Adicionar pessoa</button>
-    </div>
-
-    <!-- Por mês -->
-    <div id="view-meses" style="display:none">
-      <div id="meses-container"></div>
-    </div>
-
-    <div class="footer" id="footer-count"></div>
-  </div>
-</div>
-
-<!-- MODAL COLAR -->
-<div id="modal-colar" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;padding:20px;box-sizing:border-box;">
-  <div style="background:#fff;border-radius:14px;padding:20px;max-width:500px;margin:60px auto 0;">
-    <h2 style="font-size:16px;font-weight:normal;margin-bottom:8px;">📋 Colar lista</h2>
-    <p style="font-size:12px;color:#a0856a;margin-bottom:12px;">Abra o arquivo de backup, copie todo o conteúdo e cole aqui:</p>
-    <textarea id="texto-colar" style="width:100%;height:160px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:13px;font-family:inherit;resize:none;outline:none;" placeholder="Cole o conteúdo do backup aqui..."></textarea>
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button onclick="confirmarColar()" style="flex:1;padding:10px;background:#c49a6c;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;">✅ Confirmar</button>
-      <button onclick="fecharColar()" style="flex:1;padding:10px;background:#e8ddd4;color:#3a2e26;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- TELA PDF -->
-<div id="pdf-view">
-  <div class="pdf-actions">
-    <button class="pdf-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
-    <button class="pdf-back" onclick="fecharPDF()">← Voltar</button>
-  </div>
-  <p class="pdf-sub">Igreja na Casa</p>
-  <h1 id="pdf-titulo" style="text-align:center;font-weight:normal;margin-bottom:20px;"></h1>
-  <div id="pdf-conteudo"></div>
-  <p class="footer" id="pdf-footer"></p>
-</div>
-
-<script>
-const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-
-let lista = [
-  { id: 1, nome: "Ofeni", data: "10/11" },
-  { id: 2, nome: "Sílvia", data: "09/05" },
-  { id: 3, nome: "Edgar", data: "06/04" },
-  { id: 4, nome: "Bidu", data: "01/08" },
-  { id: 5, nome: "Nathan", data: "03/01" },
-  { id: 6, nome: "Nathália", data: "15/05" },
-  { id: 7, nome: "Iran", data: "30/04" },
-  { id: 8, nome: "Rosalina", data: "" },
-  { id: 9, nome: "Ana Clara", data: "21/11" },
-  { id: 10, nome: "Alcides", data: "" },
-  { id: 11, nome: "Albaniza", data: "09/05" },
-  { id: 12, nome: "Rodrigo", data: "13/09" },
-  { id: 13, nome: "Dioane", data: "" },
-  { id: 14, nome: "Bruno", data: "10/05" },
-  { id: 15, nome: "Pâmela", data: "28/05" },
-  { id: 16, nome: "Marlon", data: "" },
-  { id: 17, nome: "Daniel", data: "01/02" },
-  { id: 18, nome: "Davi", data: "" },
-  { id: 19, nome: "Alexandre Silva", data: "19/12" },
-  { id: 20, nome: "Igor", data: "08/09" },
-  { id: 21, nome: "Mateus", data: "15/09" },
-  { id: 22, nome: "Marcos Antônio", data: "05/12" },
-  { id: 23, nome: "Gabriel", data: "" },
-  { id: 24, nome: "Osmar", data: "29/06" },
-  { id: 25, nome: "Edilson", data: "12/03" },
-  { id: 26, nome: "Rosenir", data: "10/06" },
-  { id: 27, nome: "Leandro", data: "13/11" },
-  { id: 28, nome: "Fernanda", data: "23/05" },
-  { id: 29, nome: "Rafaela", data: "" },
-  { id: 30, nome: "Vilmar", data: "" },
-  { id: 31, nome: "Bel", data: "" },
-  { id: 32, nome: "Julio", data: "02/01" },
-  { id: 33, nome: "Shirley", data: "27/05" },
-  { id: 34, nome: "Lucélia", data: "01/02" },
-  { id: 35, nome: "Amanda", data: "05/09" },
-  { id: 36, nome: "Dani", data: "" },
-  { id: 37, nome: "Ana Júlia", data: "" },
-  { id: 38, nome: "Neuza", data: "16/06" },
-  { id: 39, nome: "Márcia Cristina", data: "04/11" },
-  { id: 40, nome: "Daniel Brasil", data: "01/02" },
-  { id: 41, nome: "Hilary", data: "" },
-  { id: 42, nome: "Luidy", data: "" },
-  { id: 43, nome: "Ana Paula", data: "" },
-  { id: 44, nome: "Ana Maria", data: "" },
-];
-
-let abaAtual = "lista";
-let editando = null;
-
-// Carregar dados salvos ou usar lista padrão
-const dadosSalvos = localStorage.getItem("aniversarios_lista");
-if (dadosSalvos) {
-  try { lista = JSON.parse(dadosSalvos); } catch(e) {}
-}
-
-function salvarLocal() {
-  localStorage.setItem("aniversarios_lista", JSON.stringify(lista));
-  const el = document.getElementById("save-indicator");
-  if (el) {
-    el.textContent = "✓ Salvo automaticamente";
-    setTimeout(() => el.textContent = "", 2000);
-  }
-}
-
-function getMes(data) {
-  if (!data) return null;
-  const p = data.split("/");
-  if (p.length < 2) return null;
-  const m = parseInt(p[1]);
-  return (isNaN(m) || m < 1 || m > 12) ? null : m;
-}
-
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.style.display = "block";
-  setTimeout(() => t.style.display = "none", 2500);
-}
-
-function setAba(aba) {
-  abaAtual = aba;
-  document.getElementById("tab-lista").classList.toggle("active", aba === "lista");
-  document.getElementById("tab-meses").classList.toggle("active", aba === "meses");
-  document.getElementById("view-lista").style.display = aba === "lista" ? "" : "none";
-  document.getElementById("view-meses").style.display = aba === "meses" ? "" : "none";
-  if (aba === "meses") renderMeses();
-  else renderLista("");
-}
-
-function makeItemHTML(item, idx, edId, edCampo) {
-  const nomeHTML = (edId === item.id && edCampo === "nome")
-    ? `<input class="edit edit-nome" id="edit-input" value="${item.nome.replace(/"/g,'&quot;')}" onblur="salvarEdit(${item.id},'nome',this.value)" onkeydown="if(event.key==='Enter')this.blur()" />`
-    : `<span class="item-nome" onclick="iniciarEdit(${item.id},'nome')">${item.nome}</span>`;
-
-  const dataHTML = (edId === item.id && edCampo === "data")
-    ? `<input class="edit edit-data" id="edit-input" value="${item.data}" placeholder="dd/mm" inputmode="numeric" pattern="[0-9]*" onblur="salvarEdit(${item.id},'data',this.value)" onkeydown="if(event.key==='Enter')this.blur()" oninput="formatarData(this)" />`
-    : `<span class="item-data ${item.data ? '' : 'vazio'}" onclick="iniciarEdit(${item.id},'data')">${item.data || "—"}</span>`;
-
-  return `
-    <div class="item" id="item-${item.id}">
-      <span class="item-num">${idx + 1}</span>
-      ${nomeHTML}
-      ${dataHTML}
-      <button class="item-del" onclick="remover(${item.id})">✕</button>
-    </div>`;
-}
-
-function renderLista(busca = "") {
-  const filtrada = lista.filter(i => i.nome.toLowerCase().includes(busca.toLowerCase()));
-  const container = document.getElementById("lista-container");
-  container.innerHTML = filtrada.map((item, idx) =>
-    makeItemHTML(item, idx, editando?.id, editando?.campo)
-  ).join("");
-  atualizarFooter();
-  if (editando) {
-    const inp = document.getElementById("edit-input");
-    if (inp) { inp.focus(); inp.select(); }
-  }
-}
-
-function renderMeses() {
-  const container = document.getElementById("meses-container");
-  let html = "";
-  for (let i = 0; i < 12; i++) {
-    const pessoas = lista
-      .filter(p => getMes(p.data) === i + 1)
-      .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0));
-    html += `<div class="mes-block">
-      <div class="mes-titulo"><span>${MESES[i]}</span><span class="mes-count">${pessoas.length} pessoa${pessoas.length !== 1 ? "s" : ""}</span></div>
-      ${pessoas.length === 0
-        ? `<div class="mes-vazio">Nenhum aniversariante</div>`
-        : `<div class="list">${pessoas.map((item, idx) => makeItemHTML(item, idx, editando?.id, editando?.campo)).join("")}</div>`
+      @media print {
+        .pdf-actions { display: none !important; }
+        body { padding: 0; background: #fff; }
+        #main-view { display: none !important; }
+        #pdf-view { display: block !important; padding: 12px; }
       }
-    </div>`;
+    </style>
+  </head>
+  <body>
+
+  <div id="toast"></div>
+
+  <!-- TELA PRINCIPAL -->
+  <div id="main-view">
+    <div class="wrap">
+      <div class="sub">Igreja na Casa</div>
+      <h1>🎂 Aniversários</h1>
+      <div class="divider"></div>
+
+      <div class="action-btns">
+        <button class="btn-pdf" onclick="mostrarPDF()">🖨️ Imprimir lista</button>
+        <button class="btn-backup" onclick="document.getElementById('file-input').click()">📂 Importar lista</button>
+        <input id="file-input" type="file" accept="*/*" style="display:none" onchange="carregarBackup(event)" />
+      </div>
+      <div id="save-indicator" style="text-align:center;font-size:11px;color:#b8a090;margin-bottom:10px;"></div>
+
+      <div class="tabs">
+        <button class="tab active" id="tab-lista" onclick="setAba('lista')">📋 Lista completa</button>
+        <button class="tab" id="tab-meses" onclick="setAba('meses')">📅 Por mês</button>
+      </div>
+
+      <!-- Lista completa -->
+      <div id="view-lista">
+        <input class="search" type="text" placeholder="Buscar nome..." oninput="renderLista(this.value)" />
+        <div class="list" id="lista-container"></div>
+        <button class="add-btn" onclick="adicionarPessoa()">+ Adicionar pessoa</button>
+      </div>
+
+      <!-- Por mês -->
+      <div id="view-meses" style="display:none">
+        <div id="meses-container"></div>
+      </div>
+
+      <div class="footer" id="footer-count"></div>
+    </div>
+  </div>
+
+  <!-- MODAL COLAR -->
+  <div id="modal-colar" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5
+  );z-index:1000;padding:20px;box-sizing:border-box;">
+    <div style="background:#fff;border-radius:14px;padding:20px;max-width:500px;margin:60px auto 0;">
+      <h2 style="font-size:16px;font-weight:normal;margin-bottom:8px;">📋 Colar lista</h2>
+      <p style="font-size:12px;color:#a0856a;margin-bottom:12px;">Abra o arquivo de backup, copie todo o conteúdo e cole
+   aqui:</p>
+      <textarea id="texto-colar" style="width:100%;height:160px;border:1px solid
+  #ddd;border-radius:8px;padding:10px;font-size:13px;font-family:inherit;resize:none;outline:none;" placeholder="Cole o
+  conteúdo do backup aqui..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button onclick="confirmarColar()" style="flex:1;padding:10px;background:#c49a6c;color:#fff;border:none;border-r
+  adius:8px;font-size:14px;cursor:pointer;font-family:inherit;">✅ Confirmar</button>
+        <button onclick="fecharColar()" style="flex:1;padding:10px;background:#e8ddd4;color:#3a2e26;border:none;border-r
+  adius:8px;font-size:14px;cursor:pointer;font-family:inherit;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA PDF -->
+  <div id="pdf-view">
+    <div class="pdf-actions">
+      <button class="pdf-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+      <button class="pdf-back" onclick="fecharPDF()">← Voltar</button>
+    </div>
+    <p class="pdf-sub">Igreja na Casa</p>
+    <h1 id="pdf-titulo" style="text-align:center;font-weight:normal;margin-bottom:20px;"></h1>
+    <div id="pdf-conteudo"></div>
+    <p class="footer" id="pdf-footer"></p>
+  </div>
+
+  <script>
+  const MESES =
+  ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+  let lista = [
+    { id: 1, nome: "Ofeni", data: "10/11" },
+    { id: 2, nome: "Sílvia", data: "09/05" },
+    { id: 3, nome: "Edgar", data: "06/04" },
+    { id: 4, nome: "Bidu", data: "01/08" },
+    { id: 5, nome: "Nathan", data: "03/01" },
+    { id: 6, nome: "Nathália", data: "15/05" },
+    { id: 7, nome: "Iran", data: "30/04" },
+    { id: 8, nome: "Rosalina", data: "" },
+    { id: 9, nome: "Ana Clara", data: "21/11" },
+    { id: 10, nome: "Alcides", data: "" },
+    { id: 11, nome: "Albaniza", data: "09/05" },
+    { id: 12, nome: "Rodrigo", data: "13/09" },
+    { id: 13, nome: "Dioane", data: "" },
+    { id: 14, nome: "Bruno", data: "10/05" },
+    { id: 15, nome: "Pâmela", data: "28/05" },
+    { id: 16, nome: "Marlon", data: "" },
+    { id: 17, nome: "Daniel", data: "01/02" },
+    { id: 18, nome: "Davi", data: "" },
+    { id: 19, nome: "Alexandre Silva", data: "19/12" },
+    { id: 20, nome: "Igor", data: "08/09" },
+    { id: 21, nome: "Mateus", data: "15/09" },
+    { id: 22, nome: "Marcos Antônio", data: "05/12" },
+    { id: 23, nome: "Gabriel", data: "" },
+    { id: 24, nome: "Osmar", data: "29/06" },
+    { id: 25, nome: "Edilson", data: "12/03" },
+    { id: 26, nome: "Rosenir", data: "10/06" },
+    { id: 27, nome: "Leandro", data: "13/11" },
+    { id: 28, nome: "Fernanda", data: "23/05" },
+    { id: 29, nome: "Rafaela", data: "" },
+    { id: 30, nome: "Vilmar", data: "" },
+    { id: 31, nome: "Bel", data: "" },
+    { id: 32, nome: "Julio", data: "02/01" },
+    { id: 33, nome: "Shirley", data: "27/05" },
+    { id: 34, nome: "Lucélia", data: "01/02" },
+    { id: 35, nome: "Amanda", data: "05/09" },
+    { id: 36, nome: "Dani", data: "" },
+    { id: 37, nome: "Ana Júlia", data: "" },
+    { id: 38, nome: "Neuza", data: "16/06" },
+    { id: 39, nome: "Márcia Cristina", data: "04/11" },
+    { id: 40, nome: "Daniel Brasil", data: "01/02" },
+    { id: 41, nome: "Hilary", data: "" },
+    { id: 42, nome: "Luidy", data: "" },
+    { id: 43, nome: "Ana Paula", data: "" },
+    { id: 44, nome: "Ana Maria", data: "" },
+  ];
+
+  let abaAtual = "lista";
+  let editando = null;
+
+  // Carregar dados salvos ou usar lista padrão
+  const dadosSalvos = localStorage.getItem("aniversarios_lista");
+  if (dadosSalvos) {
+    try { lista = JSON.parse(dadosSalvos); } catch(e) {}
   }
-  const semData = lista.filter(p => !getMes(p.data));
-  if (semData.length > 0) {
-    html += `<div class="mes-block">
-      <div class="mes-titulo" style="color:#c4a0a0"><span>Sem data</span><span class="mes-count">${semData.length} pessoa${semData.length !== 1 ? "s" : ""}</span></div>
-      <div class="list">${semData.map((item, idx) => makeItemHTML(item, idx, editando?.id, editando?.campo)).join("")}</div>
-    </div>`;
+
+  function sortLista() {
+    lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
   }
-  container.innerHTML = html;
-  atualizarFooter();
-  if (editando) {
-    const inp = document.getElementById("edit-input");
-    if (inp) { inp.focus(); inp.select(); }
+
+  function salvarLocal() {
+    sortLista();
+    localStorage.setItem("aniversarios_lista", JSON.stringify(lista));
+    const el = document.getElementById("save-indicator");
+    if (el) {
+      el.textContent = "✓ Salvo automaticamente";
+      setTimeout(() => el.textContent = "", 2000);
+    }
   }
-}
 
-function atualizarFooter() {
-  document.getElementById("footer-count").textContent = `${lista.length} pessoas na lista`;
-}
+  function getMes(data) {
+    if (!data) return null;
+    const p = data.split("/");
+    if (p.length < 2) return null;
+    const m = parseInt(p[1]);
+    return (isNaN(m) || m < 1 || m > 12) ? null : m;
+  }
 
-function iniciarEdit(id, campo) {
-  editando = { id, campo };
-  if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
-  else renderMeses();
-}
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 2500);
+  }
 
-function salvarEdit(id, campo, valor) {
-  lista = lista.map(item => item.id === id ? { ...item, [campo]: valor } : item);
-  editando = null;
-  salvarLocal();
-  if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
-  else renderMeses();
-}
+  function setAba(aba) {
+    abaAtual = aba;
+    document.getElementById("tab-lista").classList.toggle("active", aba === "lista");
+    document.getElementById("tab-meses").classList.toggle("active", aba === "meses");
+    document.getElementById("view-lista").style.display = aba === "lista" ? "" : "none";
+    document.getElementById("view-meses").style.display = aba === "meses" ? "" : "none";
+    if (aba === "meses") renderMeses();
+    else renderLista("");
+  }
 
-function remover(id) {
-  lista = lista.filter(item => item.id !== id);
-  salvarLocal();
-  if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
-  else renderMeses();
-}
+  function makeItemHTML(item, idx, edId, edCampo) {
+    const nomeHTML = (edId === item.id && edCampo === "nome")
+      ? `<input class="edit edit-nome" id="edit-input" value="${item.nome.replace(/"/g,'&quot;')}"
+  onblur="salvarEdit(${item.id},'nome',this.value)" onkeydown="if(event.key==='Enter')this.blur()" />`
+      : `<span class="item-nome" onclick="iniciarEdit(${item.id},'nome')">${item.nome}</span>`;
 
-function adicionarPessoa() {
-  const novoId = Math.max(...lista.map(i => i.id)) + 1;
-  lista.push({ id: novoId, nome: "Novo nome", data: "" });
-  editando = { id: novoId, campo: "nome" };
-  salvarLocal();
-  renderLista("");
-  document.querySelector(".search").value = "";
-  setTimeout(() => {
-    const el = document.getElementById(`item-${novoId}`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, 50);
-}
+    const dataHTML = (edId === item.id && edCampo === "data")
+      ? `<input class="edit edit-data" id="edit-input" value="${item.data}" placeholder="dd/mm" inputmode="numeric"
+  pattern="[0-9]*" onblur="salvarEdit(${item.id},'data',this.value)" onkeydown="if(event.key==='Enter')this.blur()"
+  oninput="formatarData(this)" />`
+      : `<span class="item-data ${item.data ? '' : 'vazio'}" onclick="iniciarEdit(${item.id},'data')">${item.data ||
+  "—"}</span>`;
 
-function abrirColar() {
-  document.getElementById("modal-colar").style.display = "block";
-  document.getElementById("texto-colar").value = "";
-  setTimeout(() => document.getElementById("texto-colar").focus(), 100);
-}
+    return `
+      <div class="item" id="item-${item.id}">
+        <span class="item-num">${idx + 1}</span>
+        ${nomeHTML}
+        ${dataHTML}
+        <button class="item-del" onclick="remover(${item.id})">✕</button>
+      </div>`;
+  }
 
-function fecharColar() {
-  document.getElementById("modal-colar").style.display = "none";
-}
+  function renderLista(busca = "") {
+    const filtrada = lista.filter(i => i.nome.toLowerCase().includes(busca.toLowerCase()));
+    const container = document.getElementById("lista-container");
+    container.innerHTML = filtrada.map((item, idx) =>
+      makeItemHTML(item, idx, editando?.id, editando?.campo)
+    ).join("");
+    atualizarFooter();
+    if (editando) {
+      const inp = document.getElementById("edit-input");
+      if (inp) { inp.focus(); inp.select(); }
+    }
+  }
 
-function confirmarColar() {
-  const texto = document.getElementById("texto-colar").value.trim();
-  try {
-    lista = JSON.parse(texto);
-    salvarLocal();
-    if (abaAtual === "lista") renderLista("");
+  function renderMeses() {
+    const container = document.getElementById("meses-container");
+    let html = "";
+    for (let i = 0; i < 12; i++) {
+      const pessoas = lista
+        .filter(p => getMes(p.data) === i + 1)
+        .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0));
+      html += `<div class="mes-block">
+        <div class="mes-titulo"><span>${MESES[i]}</span><span class="mes-count">${pessoas.length} pessoa${pessoas.length
+   !== 1 ? "s" : ""}</span></div>
+        ${pessoas.length === 0
+          ? `<div class="mes-vazio">Nenhum aniversariante</div>`
+          : `<div class="list">${pessoas.map((item, idx) => makeItemHTML(item, idx, editando?.id,
+  editando?.campo)).join("")}</div>`
+        }
+      </div>`;
+    }
+    const semData = lista.filter(p => !getMes(p.data));
+    if (semData.length > 0) {
+      html += `<div class="mes-block">
+        <div class="mes-titulo" style="color:#c4a0a0"><span>Sem data</span><span class="mes-count">${semData.length}
+  pessoa${semData.length !== 1 ? "s" : ""}</span></div>
+        <div class="list">${semData.map((item, idx) => makeItemHTML(item, idx, editando?.id,
+  editando?.campo)).join("")}</div>
+      </div>`;
+    }
+    container.innerHTML = html;
+    atualizarFooter();
+    if (editando) {
+      const inp = document.getElementById("edit-input");
+      if (inp) { inp.focus(); inp.select(); }
+    }
+  }
+
+  function atualizarFooter() {
+    document.getElementById("footer-count").textContent = `${lista.length} pessoas na lista`;
+  }
+
+  function iniciarEdit(id, campo) {
+    editando = { id, campo };
+    if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
     else renderMeses();
-    fecharColar();
-    showToast("✅ Lista importada!");
-  } catch {
-    showToast("❌ Conteúdo inválido. Verifique o backup.");
   }
-}
 
-function formatarData(input) {
-  let v = input.value.replace(/\D/g, ""); // só números
-  if (v.length > 4) v = v.slice(0, 4);
-  if (v.length >= 3) {
-    v = v.slice(0, 2) + "/" + v.slice(2);
+  function salvarEdit(id, campo, valor) {
+    lista = lista.map(item => item.id === id ? { ...item, [campo]: valor } : item);
+    editando = null;
+    salvarLocal();
+    if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
+    else renderMeses();
   }
-  input.value = v;
-}
 
-function carregarBackup(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (evt) => {
+  function remover(id) {
+    lista = lista.filter(item => item.id !== id);
+    salvarLocal();
+    if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
+    else renderMeses();
+  }
+
+  function adicionarPessoa() {
+    const novoId = Math.max(...lista.map(i => i.id)) + 1;
+    lista.push({ id: novoId, nome: "Novo nome", data: "" });
+    editando = { id: novoId, campo: "nome" };
+    salvarLocal();
+    renderLista("");
+    document.querySelector(".search").value = "";
+    setTimeout(() => {
+      const el = document.getElementById(`item-${novoId}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+  }
+
+  function abrirColar() {
+    document.getElementById("modal-colar").style.display = "block";
+    document.getElementById("texto-colar").value = "";
+    setTimeout(() => document.getElementById("texto-colar").focus(), 100);
+  }
+
+  function fecharColar() {
+    document.getElementById("modal-colar").style.display = "none";
+  }
+
+  function confirmarColar() {
+    const texto = document.getElementById("texto-colar").value.trim();
     try {
-      // Remove BOM e espaços extras que o iPhone às vezes adiciona
-      const texto = evt.target.result.replace(/^\uFEFF/, "").trim();
       lista = JSON.parse(texto);
       salvarLocal();
       if (abaAtual === "lista") renderLista("");
       else renderMeses();
+      fecharColar();
       showToast("✅ Lista importada!");
     } catch {
-      showToast("❌ Arquivo inválido.");
+      showToast("❌ Conteúdo inválido. Verifique o backup.");
     }
-    e.target.value = "";
-  };
-  reader.onerror = () => {
-    showToast("❌ Erro ao ler o arquivo.");
-    e.target.value = "";
-  };
-  reader.readAsText(file, "UTF-8");
-}
-
-function exportarBackup() {
-  const txt = JSON.stringify(lista, null, 2);
-  const blob = new Blob([txt], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "aniversarios_backup.txt";
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast("💾 Backup salvo!");
-}
-
-function mostrarPDF() {
-  // Baixa o backup txt automaticamente junto com a impressão
-  const txt = JSON.stringify(lista, null, 2);
-  const blob = new Blob([txt], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "aniversarios_backup.txt";
-  a.click();
-  URL.revokeObjectURL(url);
-  let conteudoHTML = "";
-  let titulo = "";
-
-  if (abaAtual === "lista") {
-    // EXPORTAR LISTA COMPLETA
-    titulo = "🎂 Lista de Aniversários";
-    conteudoHTML = `
-      <table class="pdf-table" style="width:100%;border-collapse:collapse;font-size:13px;">
-        <thead>
-          <tr style="background:#f5ede4;">
-            <th style="padding:7px 8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">#</th>
-            <th style="padding:7px 8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Nome</th>
-            <th style="padding:7px 8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Data</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${lista.map((p, i) => `
-            <tr>
-              <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#b89a80;width:24px;">${i+1}</td>
-              <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;">${p.nome}</td>
-              <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#7a5c3a;width:55px;">${p.data || "—"}</td>
-            </tr>`).join("")}
-        </tbody>
-      </table>`;
-  } else {
-    // EXPORTAR POR MÊS
-    titulo = "🎂 Aniversários por Mês";
-    const porMes = Array.from({ length: 12 }, (_, i) => ({
-      mes: MESES[i],
-      pessoas: lista.filter(p => getMes(p.data) === i + 1)
-        .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0))
-    }));
-    const semData = lista.filter(p => !getMes(p.data));
-    const todosMeses = [...porMes];
-    if (semData.length > 0) todosMeses.push({ mes: "Sem data", pessoas: semData });
-
-    const celulas = todosMeses.map(m => `
-      <div class="pdf-mes">
-        <div class="pdf-mes-titulo">${m.mes}</div>
-        ${m.pessoas.length === 0
-          ? `<div class="pdf-vazio">—</div>`
-          : `<table class="pdf-table">${m.pessoas.map((p, i) => `
-            <tr>
-              <td class="pdf-num">${i+1}</td>
-              <td>${p.nome}</td>
-              <td class="pdf-data">${p.data || "—"}</td>
-            </tr>`).join("")}
-          </table>`
-        }
-      </div>`).join("");
-    conteudoHTML = `<div class="pdf-grid">${celulas}</div>`;
   }
 
-  document.getElementById("pdf-titulo").textContent = titulo;
-  document.getElementById("pdf-conteudo").innerHTML = conteudoHTML;
-  document.getElementById("pdf-footer").textContent = `${lista.length} pessoas na lista`;
-  document.getElementById("main-view").style.display = "none";
-  document.getElementById("pdf-view").style.display = "block";
-  window.scrollTo(0, 0);
-}
+  function formatarData(input) {
+    let v = input.value.replace(/\D/g, ""); // só números
+    if (v.length > 4) v = v.slice(0, 4);
+    if (v.length >= 3) {
+      v = v.slice(0, 2) + "/" + v.slice(2);
+    }
+    input.value = v;
+  }
 
-function fecharPDF() {
-  document.getElementById("pdf-view").style.display = "none";
-  document.getElementById("main-view").style.display = "";
-}
+  function carregarBackup(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        // Remove BOM e espaços extras que o iPhone às vezes adiciona
+        const texto = evt.target.result.replace(/^\uFEFF/, "").trim();
+        lista = JSON.parse(texto);
+        salvarLocal();
+        if (abaAtual === "lista") renderLista("");
+        else renderMeses();
+        showToast("✅ Lista importada!");
+      } catch {
+        showToast("❌ Arquivo inválido.");
+      }
+      e.target.value = "";
+    };
+    reader.onerror = () => {
+      showToast("❌ Erro ao ler o arquivo.");
+      e.target.value = "";
+    };
+    reader.readAsText(file, "UTF-8");
+  }
 
-// Inicializar
-renderLista();
+  function exportarBackup() {
+    const txt = JSON.stringify(lista, null, 2);
+    const blob = new Blob([txt], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "aniversarios_backup.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("💾 Backup salvo!");
+  }
 
-// Registrar service worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
-}
-</script>
-</body>
-</html>
+  function mostrarPDF() {
+    // Baixa o backup txt automaticamente junto com a impressão
+    const txt = JSON.stringify(lista, null, 2);
+    const blob = new Blob([txt], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "aniversarios_backup.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+    let conteudoHTML = "";
+    let titulo = "";
+
+    if (abaAtual === "lista") {
+      // EXPORTAR LISTA COMPLETA
+      titulo = "🎂 Lista de Aniversários";
+      conteudoHTML = `
+        <table class="pdf-table" style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#f5ede4;">
+              <th style="padding:7px
+  8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">#</th>
+              <th style="padding:7px
+  8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Nome</th>
+              <th style="padding:7px
+  8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map((p, i) => `
+              <tr>
+                <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#b89a80;width:24px;">${i+1}</td>
+                <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;">${p.nome}</td>
+                <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#7a5c3a;width:55px;">${p.data ||
+  "—"}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>`;
+    } else {
+      // EXPORTAR POR MÊS
+      titulo = "🎂 Aniversários por Mês";
+      const porMes = Array.from({ length: 12 }, (_, i) => ({
+        mes: MESES[i],
+        pessoas: lista.filter(p => getMes(p.data) === i + 1)
+          .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0))
+      }));
+      const semData = lista.filter(p => !getMes(p.data));
+      const todosMeses = [...porMes];
+      if (semData.length > 0) todosMeses.push({ mes: "Sem data",
+
+● Aqui está o HTML completo já modificado. Para atualizar no GitHub:
+
+  1. Acesse github.com/davibidu/aniversariantes
+  2. Clique no arquivo index.html
+  3. Clique no ícone de lápis (editar)
+  4. Selecione tudo (Ctrl+A) e cole o código abaixo
+  5. Clique em "Commit changes"
+
+  ---
+  <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Aniversários - Igreja na Casa</title>
+    <meta name="theme-color" content="#c49a6c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Aniversários" />
+    <link rel="manifest" href="manifest.json" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f0eb; color:
+  #3a2e26; min-height: 100vh; padding: 24px 14px 40px; }
+      h1 { font-size: 26px; font-weight: normal; text-align: center; }
+      .sub { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #a0856a; text-align: center;
+  margin-bottom: 6px; }
+      .divider { width: 40px; height: 2px; background: #c49a6c; margin: 10px auto 20px; border-radius: 2px; }
+      .wrap { max-width: 540px; margin: 0 auto; }
+
+      /* Botões de ação */
+      .action-btns { display: flex; gap: 8px; margin-bottom: 14px; }
+      .action-btns button { flex: 1; padding: 10px 6px; border: none; border-radius: 8px; font-family: -apple-system,
+  BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 13px; cursor: pointer; color: #fff; }
+      .btn-pdf { background: #c49a6c; }
+      .btn-backup { background: #7a8eae; }
+
+      /* Abas */
+      .tabs { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid #e8ddd4; margin-bottom: 14px; }
+      .tab { flex: 1; padding: 10px; border: none; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont,
+  'Segoe UI', sans-serif; font-size: 13px; background: #fffdf9; color: #a0856a; transition: background 0.2s; }
+      .tab.active { background: #c49a6c; color: #fff; }
+
+      /* Busca */
+      .search { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #ddd0c4; background: #fffdf9;
+  font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #3a2e26;
+  margin-bottom: 12px; outline: none; }
+
+      /* Itens */
+      .list { display: flex; flex-direction: column; gap: 5px; }
+      .item { display: flex; align-items: center; background: #fffdf9; border: 1px solid #e8ddd4; border-radius: 10px;
+  padding: 9px 12px; gap: 8px; }
+      .item-num { font-size: 11px; color: #b89a80; min-width: 18px; text-align: right; }
+      .item-nome { flex: 1; font-size: 15px; color: #3a2e26; cursor: pointer; padding: 2px 0; }
+      .item-data { width: 55px; font-size: 14px; color: #7a5c3a; cursor: pointer; text-align: center; padding: 2px 0; }
+      .item-data.vazio { color: #ccc; font-style: italic; }
+      .item-del { background: none; border: none; cursor: pointer; color: #d4a0a0; font-size: 15px; padding: 2px 4px;
+  line-height: 1; font-family: inherit; }
+      input.edit { border: none; border-bottom: 1.5px solid #c49a6c; background: transparent; outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #3a2e26; padding: 2px 0; }
+      input.edit-nome { flex: 1; font-size: 15px; }
+      input.edit-data { width: 55px; font-size: 14px; color: #7a5c3a; text-align: center; }
+
+      /* Adicionar */
+      .add-btn { width: 100%; margin-top: 12px; padding: 11px; background: none; border: 1.5px dashed #c49a6c;
+  border-radius: 10px; color: #c49a6c; font-size: 14px; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont,
+   'Segoe UI', sans-serif; }
+
+      /* Por mês */
+      .mes-block { margin-bottom: 16px; }
+      .mes-titulo { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a; border-bottom: 1px
+  solid #e8ddd4; padding-bottom: 4px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items:
+  center; }
+      .mes-count { font-size: 10px; color: #c4b0a0; }
+      .mes-vazio { font-size: 13px; color: #ccc; font-style: italic; padding: 6px 4px; }
+
+      /* Rodapé */
+      .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #b8a090; }
+
+      /* Toast */
+      #toast { display: none; position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #3a2e26;
+  color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; z-index: 999; box-shadow: 0 4px 12px
+  rgba(0,0,0,0.2); white-space: nowrap; }
+
+      /* Tela PDF */
+      #pdf-view { display: none; background: #fff; min-height: 100vh; padding: 20px 24px; }
+      #pdf-view h1 { font-size: 20px; margin-bottom: 4px; }
+      .pdf-sub { text-align: center; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #a0856a;
+  margin-bottom: 16px; }
+      .pdf-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #bbb; border-left: 1px
+  solid #bbb; }
+      .pdf-mes { border-right: 1px solid #bbb; border-bottom: 1px solid #bbb; padding: 8px; break-inside: avoid; }
+      .pdf-mes-titulo { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #3a2e26; border-bottom:
+  1px solid #bbb; padding-bottom: 4px; margin-bottom: 5px; }
+      .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+      .pdf-table td { padding: 2px 3px; }
+      .pdf-num { color: #b89a80; width: 16px; }
+      .pdf-data { color: #7a5c3a; width: 36px; text-align: right; }
+      .pdf-vazio { color: #ccc; font-style: italic; font-size: 10px; padding: 2px 0; }
+      .pdf-actions { display: flex; gap: 10px; margin-bottom: 20px; }
+      .pdf-actions button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+      .pdf-print { background: #c49a6c; color: #fff; }
+      .pdf-back { background: #e8ddd4; color: #3a2e26; }
+
+      @media print {
+        .pdf-actions { display: none !important; }
+        body { padding: 0; background: #fff; }
+        #main-view { display: none !important; }
+        #pdf-view { display: block !important; padding: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+
+  <div id="toast"></div>
+
+  <!-- TELA PRINCIPAL -->
+  <div id="main-view">
+    <div class="wrap">
+      <div class="sub">Igreja na Casa</div>
+      <h1>🎂 Aniversários</h1>
+      <div class="divider"></div>
+
+      <div class="action-btns">
+        <button class="btn-pdf" onclick="mostrarPDF()">🖨️ Imprimir lista</button>
+        <button class="btn-backup" onclick="document.getElementById('file-input').click()">📂 Importar lista</button>
+        <input id="file-input" type="file" accept="*/*" style="display:none" onchange="carregarBackup(event)" />
+      </div>
+      <div id="save-indicator" style="text-align:center;font-size:11px;color:#b8a090;margin-bottom:10px;"></div>
+
+      <div class="tabs">
+        <button class="tab active" id="tab-lista" onclick="setAba('lista')">📋 Lista completa</button>
+        <button class="tab" id="tab-meses" onclick="setAba('meses')">📅 Por mês</button>
+      </div>
+
+      <!-- Lista completa -->
+      <div id="view-lista">
+        <input class="search" type="text" placeholder="Buscar nome..." oninput="renderLista(this.value)" />
+        <div class="list" id="lista-container"></div>
+        <button class="add-btn" onclick="adicionarPessoa()">+ Adicionar pessoa</button>
+      </div>
+
+      <!-- Por mês -->
+      <div id="view-meses" style="display:none">
+        <div id="meses-container"></div>
+      </div>
+
+      <div class="footer" id="footer-count"></div>
+    </div>
+  </div>
+
+  <!-- MODAL COLAR -->
+  <div id="modal-colar" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5
+  );z-index:1000;padding:20px;box-sizing:border-box;">
+    <div style="background:#fff;border-radius:14px;padding:20px;max-width:500px;margin:60px auto 0;">
+      <h2 style="font-size:16px;font-weight:normal;margin-bottom:8px;">📋 Colar lista</h2>
+      <p style="font-size:12px;color:#a0856a;margin-bottom:12px;">Abra o arquivo de backup, copie todo o conteúdo e cole
+   aqui:</p>
+      <textarea id="texto-colar" style="width:100%;height:160px;border:1px solid
+  #ddd;border-radius:8px;padding:10px;font-size:13px;font-family:inherit;resize:none;outline:none;" placeholder="Cole o
+  conteúdo do backup aqui..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button onclick="confirmarColar()" style="flex:1;padding:10px;background:#c49a6c;color:#fff;border:none;border-r
+  adius:8px;font-size:14px;cursor:pointer;font-family:inherit;">✅ Confirmar</button>
+        <button onclick="fecharColar()" style="flex:1;padding:10px;background:#e8ddd4;color:#3a2e26;border:none;border-r
+  adius:8px;font-size:14px;cursor:pointer;font-family:inherit;">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA PDF -->
+  <div id="pdf-view">
+    <div class="pdf-actions">
+      <button class="pdf-print" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+      <button class="pdf-back" onclick="fecharPDF()">← Voltar</button>
+    </div>
+    <p class="pdf-sub">Igreja na Casa</p>
+    <h1 id="pdf-titulo" style="text-align:center;font-weight:normal;margin-bottom:20px;"></h1>
+    <div id="pdf-conteudo"></div>
+    <p class="footer" id="pdf-footer"></p>
+  </div>
+
+  <script>
+  const MESES =
+  ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+  let lista = [
+    { id: 1, nome: "Ofeni", data: "10/11" },
+    { id: 2, nome: "Sílvia", data: "09/05" },
+    { id: 3, nome: "Edgar", data: "06/04" },
+    { id: 4, nome: "Bidu", data: "01/08" },
+    { id: 5, nome: "Nathan", data: "03/01" },
+    { id: 6, nome: "Nathália", data: "15/05" },
+    { id: 7, nome: "Iran", data: "30/04" },
+    { id: 8, nome: "Rosalina", data: "" },
+    { id: 9, nome: "Ana Clara", data: "21/11" },
+    { id: 10, nome: "Alcides", data: "" },
+    { id: 11, nome: "Albaniza", data: "09/05" },
+    { id: 12, nome: "Rodrigo", data: "13/09" },
+    { id: 13, nome: "Dioane", data: "" },
+    { id: 14, nome: "Bruno", data: "10/05" },
+    { id: 15, nome: "Pâmela", data: "28/05" },
+    { id: 16, nome: "Marlon", data: "" },
+    { id: 17, nome: "Daniel", data: "01/02" },
+    { id: 18, nome: "Davi", data: "" },
+    { id: 19, nome: "Alexandre Silva", data: "19/12" },
+    { id: 20, nome: "Igor", data: "08/09" },
+    { id: 21, nome: "Mateus", data: "15/09" },
+    { id: 22, nome: "Marcos Antônio", data: "05/12" },
+    { id: 23, nome: "Gabriel", data: "" },
+    { id: 24, nome: "Osmar", data: "29/06" },
+    { id: 25, nome: "Edilson", data: "12/03" },
+    { id: 26, nome: "Rosenir", data: "10/06" },
+    { id: 27, nome: "Leandro", data: "13/11" },
+    { id: 28, nome: "Fernanda", data: "23/05" },
+    { id: 29, nome: "Rafaela", data: "" },
+    { id: 30, nome: "Vilmar", data: "" },
+    { id: 31, nome: "Bel", data: "" },
+    { id: 32, nome: "Julio", data: "02/01" },
+    { id: 33, nome: "Shirley", data: "27/05" },
+    { id: 34, nome: "Lucélia", data: "01/02" },
+    { id: 35, nome: "Amanda", data: "05/09" },
+    { id: 36, nome: "Dani", data: "" },
+    { id: 37, nome: "Ana Júlia", data: "" },
+    { id: 38, nome: "Neuza", data: "16/06" },
+    { id: 39, nome: "Márcia Cristina", data: "04/11" },
+    { id: 40, nome: "Daniel Brasil", data: "01/02" },
+    { id: 41, nome: "Hilary", data: "" },
+    { id: 42, nome: "Luidy", data: "" },
+    { id: 43, nome: "Ana Paula", data: "" },
+    { id: 44, nome: "Ana Maria", data: "" },
+  ];
+
+  let abaAtual = "lista";
+  let editando = null;
+
+  // Carregar dados salvos ou usar lista padrão
+  const dadosSalvos = localStorage.getItem("aniversarios_lista");
+  if (dadosSalvos) {
+    try { lista = JSON.parse(dadosSalvos); } catch(e) {}
+  }
+
+  function sortLista() {
+    lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' }));
+  }
+
+  function salvarLocal() {
+    sortLista();
+    localStorage.setItem("aniversarios_lista", JSON.stringify(lista));
+    const el = document.getElementById("save-indicator");
+    if (el) {
+      el.textContent = "✓ Salvo automaticamente";
+      setTimeout(() => el.textContent = "", 2000);
+    }
+  }
+
+  function getMes(data) {
+    if (!data) return null;
+    const p = data.split("/");
+    if (p.length < 2) return null;
+    const m = parseInt(p[1]);
+    return (isNaN(m) || m < 1 || m > 12) ? null : m;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 2500);
+  }
+
+  function setAba(aba) {
+    abaAtual = aba;
+    document.getElementById("tab-lista").classList.toggle("active", aba === "lista");
+    document.getElementById("tab-meses").classList.toggle("active", aba === "meses");
+    document.getElementById("view-lista").style.display = aba === "lista" ? "" : "none";
+    document.getElementById("view-meses").style.display = aba === "meses" ? "" : "none";
+    if (aba === "meses") renderMeses();
+    else renderLista("");
+  }
+
+  function makeItemHTML(item, idx, edId, edCampo) {
+    const nomeHTML = (edId === item.id && edCampo === "nome")
+      ? `<input class="edit edit-nome" id="edit-input" value="${item.nome.replace(/"/g,'&quot;')}"
+  onblur="salvarEdit(${item.id},'nome',this.value)" onkeydown="if(event.key==='Enter')this.blur()" />`
+      : `<span class="item-nome" onclick="iniciarEdit(${item.id},'nome')">${item.nome}</span>`;
+
+    const dataHTML = (edId === item.id && edCampo === "data")
+      ? `<input class="edit edit-data" id="edit-input" value="${item.data}" placeholder="dd/mm" inputmode="numeric"
+  pattern="[0-9]*" onblur="salvarEdit(${item.id},'data',this.value)" onkeydown="if(event.key==='Enter')this.blur()"
+  oninput="formatarData(this)" />`
+      : `<span class="item-data ${item.data ? '' : 'vazio'}" onclick="iniciarEdit(${item.id},'data')">${item.data ||
+  "—"}</span>`;
+
+    return `
+      <div class="item" id="item-${item.id}">
+        <span class="item-num">${idx + 1}</span>
+        ${nomeHTML}
+        ${dataHTML}
+        <button class="item-del" onclick="remover(${item.id})">✕</button>
+      </div>`;
+  }
+
+  function renderLista(busca = "") {
+    const filtrada = lista.filter(i => i.nome.toLowerCase().includes(busca.toLowerCase()));
+    const container = document.getElementById("lista-container");
+    container.innerHTML = filtrada.map((item, idx) =>
+      makeItemHTML(item, idx, editando?.id, editando?.campo)
+    ).join("");
+    atualizarFooter();
+    if (editando) {
+      const inp = document.getElementById("edit-input");
+      if (inp) { inp.focus(); inp.select(); }
+    }
+  }
+
+  function renderMeses() {
+    const container = document.getElementById("meses-container");
+    let html = "";
+    for (let i = 0; i < 12; i++) {
+      const pessoas = lista
+        .filter(p => getMes(p.data) === i + 1)
+        .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0));
+      html += `<div class="mes-block">
+        <div class="mes-titulo"><span>${MESES[i]}</span><span class="mes-count">${pessoas.length} pessoa${pessoas.length
+   !== 1 ? "s" : ""}</span></div>
+        ${pessoas.length === 0
+          ? `<div class="mes-vazio">Nenhum aniversariante</div>`
+          : `<div class="list">${pessoas.map((item, idx) => makeItemHTML(item, idx, editando?.id,
+  editando?.campo)).join("")}</div>`
+        }
+      </div>`;
+    }
+    const semData = lista.filter(p => !getMes(p.data));
+    if (semData.length > 0) {
+      html += `<div class="mes-block">
+        <div class="mes-titulo" style="color:#c4a0a0"><span>Sem data</span><span class="mes-count">${semData.length}
+  pessoa${semData.length !== 1 ? "s" : ""}</span></div>
+        <div class="list">${semData.map((item, idx) => makeItemHTML(item, idx, editando?.id,
+  editando?.campo)).join("")}</div>
+      </div>`;
+    }
+    container.innerHTML = html;
+    atualizarFooter();
+    if (editando) {
+      const inp = document.getElementById("edit-input");
+      if (inp) { inp.focus(); inp.select(); }
+    }
+  }
+
+  function atualizarFooter() {
+    document.getElementById("footer-count").textContent = `${lista.length} pessoas na lista`;
+  }
+
+  function iniciarEdit(id, campo) {
+    editando = { id, campo };
+    if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
+    else renderMeses();
+  }
+
+  function salvarEdit(id, campo, valor) {
+    lista = lista.map(item => item.id === id ? { ...item, [campo]: valor } : item);
+    editando = null;
+    salvarLocal();
+    if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
+    else renderMeses();
+  }
+
+  function remover(id) {
+    lista = lista.filter(item => item.id !== id);
+    salvarLocal();
+    if (abaAtual === "lista") renderLista(document.querySelector(".search")?.value || "");
+    else renderMeses();
+  }
+
+  function adicionarPessoa() {
+    const novoId = Math.max(...lista.map(i => i.id)) + 1;
+    lista.push({ id: novoId, nome: "Novo nome", data: "" });
+    editando = { id: novoId, campo: "nome" };
+    salvarLocal();
+    renderLista("");
+    document.querySelector(".search").value = "";
+    setTimeout(() => {
+      const el = document.getElementById(`item-${novoId}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+  }
+
+  function abrirColar() {
+    document.getElementById("modal-colar").style.display = "block";
+    document.getElementById("texto-colar").value = "";
+    setTimeout(() => document.getElementById("texto-colar").focus(), 100);
+  }
+
+  function fecharColar() {
+    document.getElementById("modal-colar").style.display = "none";
+  }
+
+  function confirmarColar() {
+    const texto = document.getElementById("texto-colar").value.trim();
+    try {
+      lista = JSON.parse(texto);
+      salvarLocal();
+      if (abaAtual === "lista") renderLista("");
+      else renderMeses();
+      fecharColar();
+      showToast("✅ Lista importada!");
+    } catch {
+      showToast("❌ Conteúdo inválido. Verifique o backup.");
+    }
+  }
+
+  function formatarData(input) {
+    let v = input.value.replace(/\D/g, ""); // só números
+    if (v.length > 4) v = v.slice(0, 4);
+    if (v.length >= 3) {
+      v = v.slice(0, 2) + "/" + v.slice(2);
+    }
+    input.value = v;
+  }
+
+  function carregarBackup(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        // Remove BOM e espaços extras que o iPhone às vezes adiciona
+        const texto = evt.target.result.replace(/^\uFEFF/, "").trim();
+        lista = JSON.parse(texto);
+        salvarLocal();
+        if (abaAtual === "lista") renderLista("");
+        else renderMeses();
+        showToast("✅ Lista importada!");
+      } catch {
+        showToast("❌ Arquivo inválido.");
+      }
+      e.target.value = "";
+    };
+    reader.onerror = () => {
+      showToast("❌ Erro ao ler o arquivo.");
+      e.target.value = "";
+    };
+    reader.readAsText(file, "UTF-8");
+  }
+
+  function exportarBackup() {
+    const txt = JSON.stringify(lista, null, 2);
+    const blob = new Blob([txt], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "aniversarios_backup.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("💾 Backup salvo!");
+  }
+
+  function mostrarPDF() {
+    // Baixa o backup txt automaticamente junto com a impressão
+    const txt = JSON.stringify(lista, null, 2);
+    const blob = new Blob([txt], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "aniversarios_backup.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+    let conteudoHTML = "";
+    let titulo = "";
+
+    if (abaAtual === "lista") {
+      // EXPORTAR LISTA COMPLETA
+      titulo = "🎂 Lista de Aniversários";
+      conteudoHTML = `
+        <table class="pdf-table" style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:#f5ede4;">
+              <th style="padding:7px
+  8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">#</th>
+              <th style="padding:7px
+  8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Nome</th>
+              <th style="padding:7px
+  8px;text-align:left;font-size:11px;color:#a0856a;font-weight:normal;border-bottom:1px solid #bbb;">Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${lista.map((p, i) => `
+              <tr>
+                <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#b89a80;width:24px;">${i+1}</td>
+                <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;">${p.nome}</td>
+                <td style="padding:5px 8px;border-bottom:1px solid #f0e8e0;color:#7a5c3a;width:55px;">${p.data ||
+  "—"}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>`;
+    } else {
+      // EXPORTAR POR MÊS
+      titulo = "🎂 Aniversários por Mês";
+      const porMes = Array.from({ length: 12 }, (_, i) => ({
+        mes: MESES[i],
+        pessoas: lista.filter(p => getMes(p.data) === i + 1)
+          .sort((a, b) => (parseInt(a.data) || 0) - (parseInt(b.data) || 0))
+      }));
+      const semData = lista.filter(p => !getMes(p.data));
+      const todosMeses = [...porMes];
+      if (semData.length > 0) todosMeses.push({ mes: "Sem data", pessoas: semData });
+
+      const celulas = todosMeses.map(m => `
+        <div class="pdf-mes">
+          <div class="pdf-mes-titulo">${m.mes}</div>
+          ${m.pessoas.length === 0
+            ? `<div class="pdf-vazio">—</div>`
+            : `<table class="pdf-table">${m.pessoas.map((p, i) => `
+              <tr>
+                <td class="pdf-num">${i+1}</td>
+                <td>${p.nome}</td>
+                <td class="pdf-data">${p.data || "—"}</td>
+              </tr>`).join("")}
+            </table>`
+          }
+        </div>`).join("");
+      conteudoHTML = `<div class="pdf-grid">${celulas}</div>`;
+    }
+
+    document.getElementById("pdf-titulo").textContent = titulo;
+    document.getElementById("pdf-conteudo").innerHTML = conteudoHTML;
+    document.getElementById("pdf-footer").textContent = `${lista.length} pessoas na lista`;
+    document.getElementById("main-view").style.display = "none";
+    document.getElementById("pdf-view").style.display = "block";
+    window.scrollTo(0, 0);
+  }
+
+  function fecharPDF() {
+    document.getElementById("pdf-view").style.display = "none";
+    document.getElementById("main-view").style.display = "";
+  }
+
+  // Inicializar
+  renderLista();
+
+  // Registrar service worker
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js");
+    });
+  }
+  </script>
+  </body>
+  </html>
